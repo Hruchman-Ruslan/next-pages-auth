@@ -1,27 +1,26 @@
 import NextAuth from "next-auth";
-import CredentialsProvider from "next-auth/providers/credentials";
+import Credentials from "next-auth/providers/credentials";
 
 import { connectedToDatabase } from "@/lib/db";
 import { verifyPassword } from "@/lib/auth";
-
-interface User {
-  email: string;
-  password: string;
-}
 
 export default NextAuth({
   session: {
     strategy: "jwt",
   },
   providers: [
-    CredentialsProvider({
-      async authorize(credentials: User) {
+    Credentials({
+      credentials: {
+        email: { label: "Email", type: "text" },
+        password: { label: "Password", type: "password" },
+      },
+      async authorize(credentials, req) {
         const client = await connectedToDatabase();
 
         const userCollection = client.db().collection("users");
 
         const user = await userCollection.findOne({
-          email: credentials.email,
+          email: credentials?.email,
         });
 
         if (!user) {
@@ -30,7 +29,7 @@ export default NextAuth({
         }
 
         const isValid = await verifyPassword(
-          credentials.password,
+          credentials!.password,
           user.password
         );
 
@@ -40,7 +39,8 @@ export default NextAuth({
         }
 
         client.close();
-        return { email: user.email };
+
+        return { id: user._id.toString(), email: user.email };
       },
     }),
   ],
