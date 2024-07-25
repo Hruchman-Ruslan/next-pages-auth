@@ -29,6 +29,14 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
 
   const db = client.db();
 
+  const existingUser = await db.collection("users").findOne({ email });
+
+  if (existingUser) {
+    res.status(422).json({ message: "User exist already!" });
+    client.close();
+    return;
+  }
+
   const hashedPassword = await hashPassword(password);
 
   const result = await db.collection("users").insertOne({
@@ -37,6 +45,7 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
   });
 
   res.status(201).json({ message: "Created user!" });
+  client.close();
 }
 
 export default handler;
