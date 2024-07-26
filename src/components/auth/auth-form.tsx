@@ -29,8 +29,6 @@ export default function AuthForm({}: AuthFormProps) {
         email,
         password,
       });
-
-      console.log(result);
     } else {
       try {
         const result = await createUser(email, password);

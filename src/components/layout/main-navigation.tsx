@@ -10,9 +10,6 @@ export default function MainNavigation({}: MainNavigationProps) {
   const { data: session, status } = useSession();
   const loading = status === "loading";
 
-  console.log(session);
-  console.log(loading);
-
   return (
     <header className={classes.header}>
       <Link href="/">
