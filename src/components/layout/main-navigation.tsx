@@ -1,6 +1,6 @@
 import Link from "next/link";
 
-import { useSession } from "next-auth/react";
+import { useSession, signOut } from "next-auth/react";
 
 import classes from "./main-navigation.module.css";
 
@@ -32,7 +32,7 @@ export default function MainNavigation({}: MainNavigationProps) {
                 <Link href="/profile">Profile</Link>
               </li>
               <li>
-                <button>Logout</button>
+                <button onClick={() => signOut()}>Logout</button>
               </li>
             </>
           )}
