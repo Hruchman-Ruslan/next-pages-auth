@@ -1,4 +1,5 @@
 import { useRef, useState } from "react";
+import { useRouter } from "next/router";
 
 import { signIn } from "next-auth/react";
 
@@ -8,6 +9,8 @@ import createUser from "@/lib/createUser";
 export interface AuthFormProps {}
 
 export default function AuthForm({}: AuthFormProps) {
+  const router = useRouter();
+
   const emailRef = useRef<HTMLInputElement>(null);
   const passwordRef = useRef<HTMLInputElement>(null);
 
@@ -29,6 +32,10 @@ export default function AuthForm({}: AuthFormProps) {
         email,
         password,
       });
+
+      if (!result?.error) {
+        router.replace("/profile");
+      }
     } else {
       try {
         const result = await createUser(email, password);
