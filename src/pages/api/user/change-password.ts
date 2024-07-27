@@ -12,6 +12,8 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
 
   const session = await getSession({ req: req });
 
+  console.log("session", session);
+
   if (!session) {
     res.status(401).json({ message: "Not authenticated!" });
     return;
@@ -27,8 +29,6 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
 
   const user = await usersCollection.findOne({ email: userEmail });
 
-  console.log("user", user);
-
   if (!user) {
     res.status(404).json({ message: "User not found." });
     client.close();
@@ -37,7 +37,7 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
 
   const currentPassword = user.password;
 
-  const passwordAreEqual = verifyPassword(oldPassword, currentPassword);
+  const passwordAreEqual = await verifyPassword(oldPassword, currentPassword);
 
   if (!passwordAreEqual) {
     res.status(403).json({ message: "Invalid password." });
